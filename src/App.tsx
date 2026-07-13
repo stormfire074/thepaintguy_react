@@ -5,6 +5,7 @@ import { Footer } from './sections/Footer';
 import { useMousePosition, useScrollProgress } from './hooks';
 import { PaintScene } from './three/PaintScene';
 import { PaintSplashes } from './components/PaintSplashes';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import './styles/animations.css';
 
 const About = lazy(() => import('./sections/About').then(m => ({ default: m.About })));
@@ -28,20 +29,22 @@ function App() {
   const scrollProgress = useScrollProgress();
 
   return (
-    <div className="relative min-h-screen bg-white">
-      {/* Fixed full-page 3D paint bucket background */}
+    <div className="min-h-screen bg-white">
+      {/* Fixed full-page 3D paint bucket */}
       <div className="fixed inset-0 z-0 pointer-events-none">
-        <PaintScene
-          mouse={mouse}
-          scrollProgress={scrollProgress}
-          className="w-full h-full"
-        />
+        <ErrorBoundary>
+          <PaintScene
+            mouse={mouse}
+            scrollProgress={scrollProgress}
+            variant="floating"
+            className="w-full h-full"
+          />
+        </ErrorBoundary>
       </div>
 
-      {/* 2D paint splashes that appear on scroll */}
+      {/* Scroll-triggered paint splashes */}
       <PaintSplashes />
 
-      {/* All content sits above the bucket */}
       <div className="relative z-10">
         <Navbar />
         <main>

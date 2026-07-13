@@ -8,14 +8,12 @@ export function Hero() {
       className="relative min-h-screen flex items-center overflow-hidden"
       aria-label="Hero"
     >
-      {/* Background gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-charcoal via-navy to-charcoal opacity-90" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_50%,rgba(67,97,238,0.15),transparent_60%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_80%_20%,rgba(233,69,96,0.1),transparent_50%)]" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 w-full">
         <div className="min-h-screen flex items-center">
-          {/* Text Content - full width now */}
           <div className="w-full max-w-3xl">
             <motion.div
               initial={{ opacity: 0, x: -60 }}
@@ -69,7 +67,6 @@ export function Hero() {
               </a>
             </motion.div>
 
-            {/* Trust indicators */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -94,7 +91,6 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Scroll indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
