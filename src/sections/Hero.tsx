@@ -1,25 +1,22 @@
 import { motion } from 'framer-motion';
 import { HiArrowRight } from 'react-icons/hi';
-import { useMousePosition } from '../hooks';
-import { PaintScene } from '../three/PaintScene';
 
 export function Hero() {
-  const mouse = useMousePosition();
-
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-charcoal via-navy to-charcoal"
+      className="relative min-h-screen flex items-center overflow-hidden"
       aria-label="Hero"
     >
       {/* Background gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-charcoal via-navy to-charcoal opacity-90" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_50%,rgba(67,97,238,0.15),transparent_60%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_80%_20%,rgba(233,69,96,0.1),transparent_50%)]" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 w-full">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center min-h-screen py-32">
-          {/* Text Content */}
-          <div className="order-2 lg:order-1">
+        <div className="min-h-screen flex items-center">
+          {/* Text Content - full width now */}
+          <div className="w-full max-w-3xl">
             <motion.div
               initial={{ opacity: 0, x: -60 }}
               animate={{ opacity: 1, x: 0 }}
@@ -94,16 +91,6 @@ export function Hero() {
               </div>
             </motion.div>
           </div>
-
-          {/* 3D Bucket */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.2, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="order-1 lg:order-2 h-[400px] md:h-[500px] lg:h-[600px]"
-          >
-            <PaintScene mouse={mouse} variant="hero" className="w-full h-full" />
-          </motion.div>
         </div>
       </div>
 
@@ -112,7 +99,7 @@ export function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 2 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
       >
         <motion.div
           animate={{ y: [0, 8, 0] }}
