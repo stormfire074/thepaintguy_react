@@ -22,18 +22,6 @@ function App() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Fixed full-page 3D: bucket first half, roller second half */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <ErrorBoundary>
-          <PaintScene
-            mouse={mouse}
-            scrollProgress={scrollProgress}
-            variant="floating"
-            className="w-full h-full"
-          />
-        </ErrorBoundary>
-      </div>
-
       <div className="relative z-10">
         <Navbar />
         <main>
@@ -54,6 +42,18 @@ function App() {
           <Contact />
         </main>
         <Footer />
+      </div>
+
+      {/* 3D layer floats ABOVE everything, pointer-events-none so clicks pass through */}
+      <div className="fixed top-0 right-0 w-[45vw] h-screen z-30 pointer-events-none">
+        <ErrorBoundary>
+          <PaintScene
+            mouse={mouse}
+            scrollProgress={scrollProgress}
+            variant="floating"
+            className="w-full h-full"
+          />
+        </ErrorBoundary>
       </div>
     </div>
   );
