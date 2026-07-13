@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+@theme {
+  --color-charcoal: #1a1a2e;
+  --color-charcoal-light: #2d2d44;
+  --color-navy: #16213e;
+  --color-navy-light: #0f3460;
+  --color-accent: #e94560;
+  --color-accent-warm: #ff6b35;
+  --color-accent-blue: #4361ee;
+  --color-accent-gold: #f0a500;
+  --color-paint-blue: #4361ee;
+  --color-paint-red: #e94560;
+  --color-paint-yellow: #f0a500;
+  --color-paint-green: #2ec4b6;
+  --color-surface: #f8f9fa;
+  --color-surface-dark: #e9ecef;
+
+  --font-heading: "Inter", "SF Pro Display", system-ui, -apple-system, sans-serif;
+  --font-body: "Inter", "SF Pro Text", system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background-color: #ffffff;
+    color: #1a1a2e;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: rgba(233, 69, 96, 0.2);
+    color: #1a1a2e;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(26, 26, 46, 0.2);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(26, 26, 46, 0.4);
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg, #e94560 0%, #4361ee 50%, #f0a500 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .glass-dark {
+    background: rgba(26, 26, 46, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .paint-splatter {
+    filter: url(#paint-splatter-filter);
+  }
+
+  .section-padding {
+    padding: 120px 24px;
+  }
+
+  @media (max-width: 768px) {
+    .section-padding {
+      padding: 80px 16px;
+    }
+  }
+}

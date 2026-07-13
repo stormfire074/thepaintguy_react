@@ -1,0 +1,42 @@
+/* Paint drip keyframes */
+@keyframes paintDrip {
+  0% { transform: translateY(-100%) scaleY(0); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translateY(0) scaleY(1); opacity: 1; }
+}
+
+@keyframes floatGentle {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 20px rgba(233, 69, 96, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(233, 69, 96, 0.6); }
+}
+
+@keyframes brushStroke {
+  0% { clip-path: inset(0 100% 0 0); }
+  100% { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes rollerReveal {
+  0% { clip-path: circle(0% at 50% 50%); }
+  100% { clip-path: circle(100% at 50% 50%); }
+}
+
+@keyframes splashIn {
+  0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+  60% { transform: scale(1.1) rotate(2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes slideReveal {
+  0% { clip-path: polygon(0 0, 0 0, 0 100%, 0 100%); }
+  100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+}
