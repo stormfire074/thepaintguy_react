@@ -11,118 +11,150 @@ export function PaintRoller({ mouse = { x: 0, y: 0 } }: PaintRollerProps) {
   const rollerRef = useRef<THREE.Mesh>(null);
   const handleRef = useRef<THREE.Group>(null);
 
-  const handleColor = useMemo(() => new THREE.Color('#555555'), []);
-  const rollerColor = useMemo(() => new THREE.Color('#e94560'), []);
-  const frameColor = useMemo(() => new THREE.Color('#888888'), []);
-  const paintColor = useMemo(() => new THREE.Color('#e94560'), []);
+  const frameMaterial = useMemo(() => new THREE.MeshPhysicalMaterial({
+    color: '#a0a0a0',
+    roughness: 0.2,
+    metalness: 0.9,
+    clearcoat: 0.3,
+    clearcoatRoughness: 0.2,
+    envMapIntensity: 2.0,
+  }), []);
 
-  const handleMaterial = useMemo(
-    () =>
-      new THREE.MeshPhysicalMaterial({
-        color: handleColor,
-        roughness: 0.6,
-        metalness: 0.3,
-      }),
-    [handleColor]
-  );
+  const rollerMaterial = useMemo(() => new THREE.MeshPhysicalMaterial({
+    color: '#e8e8e8',
+    roughness: 0.85,
+    metalness: 0.0,
+  }), []);
 
-  const rollerMaterial = useMemo(
-    () =>
-      new THREE.MeshPhysicalMaterial({
-        color: rollerColor,
-        roughness: 0.8,
-        metalness: 0.0,
-      }),
-    [rollerColor]
-  );
+  const paintMaterial = useMemo(() => new THREE.MeshPhysicalMaterial({
+    color: '#dc2626',
+    roughness: 0.12,
+    metalness: 0.0,
+    clearcoat: 1.0,
+    clearcoatRoughness: 0.08,
+    envMapIntensity: 1.5,
+    sheen: 0.6,
+    sheenColor: new THREE.Color('#f87171'),
+  }), []);
 
-  const frameMaterial = useMemo(
-    () =>
-      new THREE.MeshPhysicalMaterial({
-        color: frameColor,
-        roughness: 0.25,
-        metalness: 0.85,
-      }),
-    [frameColor]
-  );
+  const handleMaterial = useMemo(() => new THREE.MeshPhysicalMaterial({
+    color: '#1a1a1a',
+    roughness: 0.55,
+    metalness: 0.15,
+  }), []);
 
-  const paintMaterial = useMemo(
-    () =>
-      new THREE.MeshPhysicalMaterial({
-        color: paintColor,
-        roughness: 0.15,
-        metalness: 0.0,
-        clearcoat: 1.0,
-        clearcoatRoughness: 0.1,
-        transparent: true,
-        opacity: 0.85,
-      }),
-    [paintColor]
-  );
+  const gripMaterial = useMemo(() => new THREE.MeshPhysicalMaterial({
+    color: '#16a34a',
+    roughness: 0.7,
+    metalness: 0.05,
+  }), []);
 
   useFrame((state) => {
     if (!groupRef.current) return;
     const t = state.clock.getElapsedTime();
 
-    // Gentle rotation and mouse follow
-    groupRef.current.rotation.y = t * 0.25 + mouse.x * 0.4;
-    groupRef.current.rotation.x = Math.sin(t * 0.4) * 0.08 + mouse.y * 0.15;
-    groupRef.current.position.y = Math.sin(t * 0.6) * 0.08;
+    groupRef.current.rotation.y = t * 0.2 + mouse.x * 0.35;
+    groupRef.current.rotation.x = Math.sin(t * 0.35) * 0.06 + mouse.y * 0.12;
+    groupRef.current.position.y = Math.sin(t * 0.5) * 0.06;
 
-    // Spin the roller cylinder
     if (rollerRef.current) {
-      rollerRef.current.rotation.z += 0.03;
+      rollerRef.current.rotation.z += 0.025;
     }
 
-    // Slight handle swing
     if (handleRef.current) {
-      handleRef.current.rotation.z = Math.sin(t * 0.9) * 0.05;
+      handleRef.current.rotation.z = Math.sin(t * 0.7) * 0.04;
     }
   });
 
   return (
     <group ref={groupRef} castShadow>
-      {/* Roller cylinder (the soft part) */}
+      {/* === ROLLER CYLINDER === */}
       <mesh ref={rollerRef} castShadow receiveShadow material={rollerMaterial}>
-        <cylinderGeometry args={[0.5, 0.5, 1.6, 32]} />
+        <cylinderGeometry args={[0.48, 0.48, 1.5, 64]} />
       </mesh>
 
       {/* Paint coating on roller */}
-      <mesh position={[0, 0, 0]} material={paintMaterial}>
-        <cylinderGeometry args={[0.52, 0.52, 1.5, 32]} />
+      <mesh material={paintMaterial}>
+        <cylinderGeometry args={[0.50, 0.50, 1.42, 64]} />
       </mesh>
 
-      {/* Metal frame arm */}
+      {/* Roller end caps */}
+      <mesh position={[0, 0.76, 0]} rotation={[-Math.PI / 2, 0, 0]} material={frameMaterial}>
+        <circleGeometry args={[0.50, 32]} />
+      </mesh>
+      <mesh position={[0, -0.76, 0]} rotation={[Math.PI / 2, 0, 0]} material={frameMaterial}>
+        <circleGeometry args={[0.50, 32]} />
+      </mesh>
+
+      {/* Roller texture rings (fabric texture simulation) */}
+      {[-0.5, -0.25, 0, 0.25, 0.5].map((y) => (
+        <mesh key={y} position={[0, y, 0]} material={paintMaterial}>
+          <torusGeometry args={[0.51, 0.008, 6, 48]} />
+        </mesh>
+      ))}
+
+      {/* === METAL FRAME === */}
       <group ref={handleRef}>
         {/* Vertical shaft */}
-        <mesh position={[0, 0.7, 0]} castShadow material={frameMaterial}>
-          <cylinderGeometry args={[0.04, 0.04, 0.8, 12]} />
+        <mesh position={[0, 1.1, 0]} castShadow material={frameMaterial}>
+          <cylinderGeometry args={[0.035, 0.035, 0.75, 16]} />
+        </mesh>
+
+        {/* L-shaped bend */}
+        <mesh position={[0, 0.72, 0]} material={frameMaterial}>
+          <boxGeometry args={[0.07, 0.1, 0.07]} />
         </mesh>
 
         {/* Horizontal axle through roller */}
         <mesh position={[0, 0, 0]} rotation={[0, 0, Math.PI / 2]} material={frameMaterial}>
-          <cylinderGeometry args={[0.035, 0.035, 1.8, 12]} />
+          <cylinderGeometry args={[0.03, 0.03, 1.7, 16]} />
         </mesh>
 
-        {/* L-shaped connector */}
-        <mesh position={[0, 0.35, 0]} material={frameMaterial}>
-          <boxGeometry args={[0.08, 0.7, 0.08]} />
+        {/* Axle end caps */}
+        <mesh position={[0, 0, 0.85]} material={frameMaterial}>
+          <sphereGeometry args={[0.04, 12, 12]} />
+        </mesh>
+        <mesh position={[0, 0, -0.85]} material={frameMaterial}>
+          <sphereGeometry args={[0.04, 12, 12]} />
         </mesh>
 
-        {/* Handle grip */}
-        <mesh position={[0, 1.5, 0]} material={handleMaterial}>
-          <cylinderGeometry args={[0.06, 0.07, 1.2, 12]} />
+        {/* Handle tube */}
+        <mesh position={[0, 1.8, 0]} material={handleMaterial}>
+          <cylinderGeometry args={[0.055, 0.06, 1.1, 16]} />
         </mesh>
+
+        {/* Handle grip (rubber) */}
+        <mesh position={[0, 1.65, 0]} material={gripMaterial}>
+          <cylinderGeometry args={[0.07, 0.065, 0.5, 16]} />
+        </mesh>
+
+        {/* Grip texture rings */}
+        {[-0.15, -0.05, 0.05, 0.15].map((y) => (
+          <mesh key={y} position={[0, 1.65 + y, 0]} material={gripMaterial}>
+            <torusGeometry args={[0.072, 0.005, 6, 24]} />
+          </mesh>
+        ))}
 
         {/* Handle end cap */}
-        <mesh position={[0, 2.15, 0]} material={handleMaterial}>
-          <sphereGeometry args={[0.08, 12, 12]} />
+        <mesh position={[0, 2.38, 0]} material={handleMaterial}>
+          <sphereGeometry args={[0.065, 16, 16]} />
+        </mesh>
+
+        {/* Bottom end cap */}
+        <mesh position={[0, 0.72, 0]} material={handleMaterial}>
+          <sphereGeometry args={[0.045, 12, 12]} />
         </mesh>
       </group>
 
-      {/* Paint drip from roller */}
-      <mesh position={[0.48, -0.2, 0]} rotation={[0, 0, 0.3]} material={paintMaterial}>
-        <capsuleGeometry args={[0.02, 0.25, 6, 6]} />
+      {/* === PAINT DRIPS === */}
+      <mesh position={[0.49, -0.3, 0.2]} rotation={[0, 0.4, 0.2]} material={paintMaterial}>
+        <capsuleGeometry args={[0.018, 0.3, 6, 8]} />
+      </mesh>
+      <mesh position={[-0.45, -0.1, -0.3]} rotation={[0.2, -0.3, 0.15]} material={paintMaterial}>
+        <capsuleGeometry args={[0.012, 0.2, 6, 8]} />
+      </mesh>
+      <mesh position={[0.3, -0.5, 0.1]} rotation={[0.1, 0.2, -0.1]} material={paintMaterial}>
+        <capsuleGeometry args={[0.01, 0.15, 4, 6]} />
       </mesh>
     </group>
   );
