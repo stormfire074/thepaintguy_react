@@ -1,10 +1,10 @@
-import { Suspense, lazy } from 'react';
+import { lazy } from 'react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './sections/Hero';
 import { Footer } from './sections/Footer';
 import { useMousePosition, useScrollProgress } from './hooks';
 import { PaintScene } from './three/PaintScene';
-import { PaintSplashes } from './components/PaintSplashes';
+import { SplashDivider } from './components/PaintSplashes';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import './styles/animations.css';
 
@@ -16,21 +16,13 @@ const Gallery = lazy(() => import('./sections/Gallery').then(m => ({ default: m.
 const Testimonials = lazy(() => import('./sections/Testimonials').then(m => ({ default: m.Testimonials })));
 const Contact = lazy(() => import('./sections/Contact').then(m => ({ default: m.Contact })));
 
-function SectionLoader() {
-  return (
-    <div className="flex items-center justify-center py-32">
-      <div className="w-8 h-8 rounded-full border-2 border-charcoal/10 border-t-[#e94560] animate-spin" />
-    </div>
-  );
-}
-
 function App() {
   const mouse = useMousePosition();
   const scrollProgress = useScrollProgress();
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Fixed full-page 3D paint bucket */}
+      {/* Fixed full-page 3D: bucket first half, roller second half */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <ErrorBoundary>
           <PaintScene
@@ -42,34 +34,24 @@ function App() {
         </ErrorBoundary>
       </div>
 
-      {/* Scroll-triggered paint splashes */}
-      <PaintSplashes />
-
       <div className="relative z-10">
         <Navbar />
         <main>
           <Hero />
-          <Suspense fallback={<SectionLoader />}>
-            <About />
-          </Suspense>
-          <Suspense fallback={<SectionLoader />}>
-            <Services />
-          </Suspense>
-          <Suspense fallback={<SectionLoader />}>
-            <Process />
-          </Suspense>
-          <Suspense fallback={<SectionLoader />}>
-            <BeforeAfter />
-          </Suspense>
-          <Suspense fallback={<SectionLoader />}>
-            <Gallery />
-          </Suspense>
-          <Suspense fallback={<SectionLoader />}>
-            <Testimonials />
-          </Suspense>
-          <Suspense fallback={<SectionLoader />}>
-            <Contact />
-          </Suspense>
+          <SplashDivider colors={['#4361ee', '#e94560', '#f0a500']} />
+          <About />
+          <SplashDivider colors={['#e94560', '#2ec4b6', '#4361ee']} />
+          <Services />
+          <SplashDivider colors={['#f0a500', '#4361ee', '#e94560']} />
+          <Process />
+          <SplashDivider colors={['#2ec4b6', '#e94560', '#f0a500']} />
+          <BeforeAfter />
+          <SplashDivider colors={['#4361ee', '#f0a500', '#2ec4b6']} />
+          <Gallery />
+          <SplashDivider colors={['#e94560', '#4361ee', '#f0a500']} />
+          <Testimonials />
+          <SplashDivider colors={['#f0a500', '#2ec4b6', '#e94560']} />
+          <Contact />
         </main>
         <Footer />
       </div>

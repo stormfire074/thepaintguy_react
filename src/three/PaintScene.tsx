@@ -1,8 +1,10 @@
-import { Suspense } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { Suspense, useRef } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { Environment, ContactShadows } from '@react-three/drei';
 import { PaintBucket } from './PaintBucket';
+import { PaintRoller } from './PaintRoller';
 import { Particles } from './Particles';
+import * as THREE from 'three';
 
 interface PaintSceneProps {
   mouse?: { x: number; y: number };
@@ -27,13 +29,49 @@ function HeroScene({ mouse }: { mouse: { x: number; y: number } }) {
 }
 
 function FloatingScene({ mouse, scrollProgress }: { mouse: { x: number; y: number }; scrollProgress: number }) {
+  const groupRef = useRef<THREE.Group>(null);
+
+  // Transition: bucket at 0–0.45, crossfade at 0.45–0.55, roller at 0.55–1
+  const bucketOpacity = THREE.MathUtils.clamp(1 - (scrollProgress - 0.35) / 0.2, 0, 1);
+  const rollerOpacity = THREE.MathUtils.clamp((scrollProgress - 0.4) / 0.2, 0, 1);
+
+  useFrame(() => {
+    if (!groupRef.current) return;
+    // Move group along curved path
+    const x = Math.sin(scrollProgress * Math.PI) * 2.5;
+    const y = -scrollProgress * 6 + 1.5;
+    groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, x, 0.04);
+    groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, y, 0.04);
+    groupRef.current.rotation.y = THREE.MathUtils.lerp(
+      groupRef.current.rotation.y,
+      scrollProgress * Math.PI * 1.5,
+      0.03
+    );
+    groupRef.current.rotation.z = THREE.MathUtils.lerp(
+      groupRef.current.rotation.z,
+      Math.sin(scrollProgress * Math.PI) * 0.3,
+      0.04
+    );
+  });
+
   return (
     <>
       <ambientLight intensity={0.4} />
       <directionalLight position={[5, 8, 5]} intensity={1.2} castShadow />
       <pointLight position={[-3, 2, -3]} intensity={0.6} color="#4361ee" />
       <pointLight position={[3, -1, 2]} intensity={0.3} color="#e94560" />
-      <PaintBucket mouse={mouse} scrollProgress={scrollProgress} variant="floating" />
+
+      <group ref={groupRef}>
+        {/* Bucket fades out as roller fades in */}
+        <group visible={bucketOpacity > 0.01}>
+          <PaintBucket mouse={mouse} scrollProgress={scrollProgress} variant="floating" />
+        </group>
+
+        <group visible={rollerOpacity > 0.01}>
+          <PaintRoller mouse={mouse} />
+        </group>
+      </group>
+
       <ContactShadows position={[0, -0.7, 0]} opacity={0.4} scale={5} blur={2.5} far={4} />
       <Particles count={60} color="#4361ee" />
       <Environment preset="studio" />
